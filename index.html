@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Details</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        body {
+            background-color: #fff; /* White background */
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #000; /* Black text */
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 60px rgba(0, 0, 0, 0.2); /* Black shadow for luxury effect */
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            border: 2px solid rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .container:hover {
+            transform: scale(1.05); /* Slight zoom effect on hover */
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.4); /* Larger shadow on hover */
+        }
+
+        .container h1 {
+            font-size: 2.2rem;
+            color: #000;
+            margin-bottom: 20px;
+            letter-spacing: 2px; /* Increase letter spacing for premium feel */
+        }
+
+        input {
+            width: 95%;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 30px;
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.05);
+            color: black;
+            font-size: 1.2rem;
+            outline: none;
+            transition: background 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        input:focus {
+            background: rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        button {
+            background: #000; /* Black background for button */
+            color: #fff;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: 600;
+            width: 95%;
+            margin-top: 20px;
+            transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        button:hover {
+            background: #333; /* Slightly lighter black on hover */
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        #utrContainer {
+            display: none;
+        }
+
+        #thankYouPage {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #thankYouPage h2 {
+            color: #000;
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+        }
+
+        #thankYouPage p {
+            color: #000;
+            margin: 5px 0;
+        }
+
+        #timer {
+            display: none;
+            margin-top: 20px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #000;
+        }
+
+        #qrCode {
+            display: none;
+            margin-top: 25px;
+            width: 250px; /* Increase size of QR code */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #qrCode:hover {
+            transform: scale(1.2); /* Larger zoom effect on hover */
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Payment Details</h1>
+    <form id="paymentForm">
+        <input type="email" id="email" placeholder="Enter your email" required>
+        <input type="tel" id="phone" placeholder="Enter phone number" required>
+        <button type="submit">Submit Payment</button>
+    </form>
+    
+    <div id="utrContainer">
+        <input type="text" id="utr" placeholder="Enter UTR number" required>
+        <button id="submitUtr">Submit UTR</button>
+        <img id="qrCode" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhPpUsxef52acr-DNbHbqOiNhq0OYcG-Rg6cjRKytwaBNGz0-8aSrFOr_n3QDCJQtUinKPXskGgGq0oNrIGkwPrsT7vhyphenhyphenoTn8m83GnSztvkzcYGwuvHxUor6Gxp_aMvcvEkTL8R3ZOqSJ4FEpIcBD6i-I7rsUEAMga9QtdrwewOTcgmza6Z_jEZvkEhtnI/s320/Picsart_24-09-22_15-02-05-388.png" alt="QR Code">
+    </div>
+
+    <div id="thankYouPage">
+        <h2>Thank You!</h2>
+        <p>Payment done Successfully</p>
+        <p>Your order received</p>
+        <p>Wait 1 hour</p>
+        <p>You will receive a message on WhatsApp</p>
+        <button onclick="location.reload()">Home</button>
+    </div>
+
+    <div id="timer">03:00</div>
+</div>
+
+<script>
+    const form = document.getElementById('paymentForm');
+    const utrContainer = document.getElementById('utrContainer');
+    const qrCode = document.getElementById('qrCode');
+    const thankYouPage = document.getElementById('thankYouPage');
+    const submitUtrButton = document.getElementById('submitUtr');
+    const timerElement = document.getElementById('timer');
+    let timerInterval;
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        utrContainer.style.display = 'block';
+        qrCode.style.display = 'block';
+        startTimer(3); 
+    });
+
+    submitUtrButton.addEventListener('click', function() {
+        const utr = document.getElementById('utr').value;
+        const email = document.getElementById('email').value; 
+        const phone = document.getElementById('phone').value; 
+
+        fetch('https://sheetdb.io/api/v1/qzjcxf971jic2', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "data": {
+                    "Email": email,
+                    "Phone": phone,
+                    "UTR": utr 
+                }
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.created > 0) {
+                clearInterval(timerInterval); 
+                utrContainer.style.display = 'none'; 
+                thankYouPage.style.display = 'block'; 
+            }
+        });
+    });
+
+    function startTimer(minutes) {
+        let time = minutes * 60;
+        timerElement.style.display = 'block'; 
+        timerInterval = setInterval(function() {
+            const minutes = Math.floor(time / 60);
+            const seconds = time % 60;
+            timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`; 
+
+            if (time === 0) {
+                clearInterval(timerInterval);
+                alert("Time is up! Please try again.");
+                timerElement.style.display = 'none'; 
+            }
+            time--;
+        }, 1000);
+    }
+</script>
+
+</body>
+</html>
